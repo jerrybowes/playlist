@@ -1,50 +1,69 @@
-/*--------------------------------------------------------------------------*/
-/* JBN project default  css stylesheet 										*/
-/*--------------------------------------------------------------------------*/
-/* $Source: /home/jbowes/jbn/src/css/RCS/jbn.css,v $				*/
-/* $Date: 2006/04/24 23:33:27 $												*/
-/* $Id: jbn.css,v 1.9 2006/04/24 23:33:27 jbowes Exp $			*/
-/*--------------------------------------------------------------------------*/
-/* Jerry Bowes	BCS Solutions, www.bcs-solutions.com, jerbowes@pacbell.net	*/
-/*--------------------------------------------------------------------------*/
 /*
-** To Edit:
-** Setup environment
-** 	% jbn	; (aliased to 'setenv PROJ jbn; so' )
-** Edit Development copy:
-**	% U jbn		; This does a RCS checkout and opens a vi
-**				; session as controlled by master.scm.rcs
-**				; script to which 'U' command is linked.
-**				; and the ~/config/scmconfig.dat file(s)
-**				; After edit, script deletes all lines that
-**				; contain keyword 'liveoly' in upper case
-**				; and updates the stylesheet in the /csslive
-**				; directory 
-**	% rel -U jbn	; Strips out all lines with 'devonly' keyword
-**				; in upper case, changes all instances of
-**				; 'csslive'  to 'csslive' 
-**				; and copies file to /csslive directory.
-*/
-/*--------------------------------------------------------------------------*/
-/*--------------------------------------------------------------------------*/
-/* TH { background: #99CCFF; } */
+ * ==================================================================
+ *  ggsdinfo css
+ * ------------------------------------------------------------------
+ *  $Id: hdc.css,v 1.51 2022/08/19 19:00:42 jbowes Exp $
+ * ------------------------------------------------------------------
+ *  SET EDITOR FOR 4 space TAB stops
+ *  :set autoindent tabstop=4 showmatch	 (vi)
+ * ==================================================================
+ * ------------------------------------------------------------------
+ * #fff - white
+ * #000 - black
+ * #DBB167- yellow	left margins
+ * #944D6B - pink	Table headers
+ * #594C7A - purple	Navbar
+ * ------------------------------------------------------------------
+ */
 
-TH,
-TH TH,
-TH TH TH,
+BODY
+{
+	font-family: arial, helvetica;
+	font-size: 12pt;
+}
+
+
+ADDRESS
+{
+	font-family: arial, helvetica;
+	font-size: 12pt;
+	color: #FFFFFF;
+}
+
+
+TH 	{
+	font-size: 12pt;
+	font-weight: bold;
+	text-align: center;
+	color: #FFF;
+	background-color:  #944D6B; //  pink
+	padding: 3 px;
+	}
+
 .tdh {
-	background-color: #99AAEE;
+	font-size: 12pt;
+	font-weight: bold;
+	text-align: center;
+	color: #FFF;
+	background-color:  #944D6B; //  pink
 	}
+
 .ths {
-	font-size: 9pt;
-	}
-.tht {
-	font-size: 8pt;
+	font-size: 10pt;
+	text-align: center;
+	color: #FFF;
+	background-color:  #944D6B; //  pink
 	}
 
 H1.banner	{
 	font-size: 16pt;
 	font-weight: bold;
+	}
+
+H2.banner	{
+	font-size: 14pt;
+	font-weight: bold;
+	font-style: italic;
 	}
 
 H1	{
@@ -53,84 +72,243 @@ H1	{
 	}
 
 H2	{
-	font-size: 12pt;
+	font-size: 14pt;
 	font-weight: bold;
+	font-style: italic;
 	}
 
 H3	{
 	font-size: 12pt;
 	font-weight: bold;
-	font-style: italic;
 	}
 
 H4	{
 	font-size: 12pt;
 	font-style: italic;
+	font-weight: bold;
 	}
 
+H5	{
+	font-size: 12pt;
+	font-weight: bold;
+	}
 
-.tdsc,
-TD.tdsc,
-TD TD.tdsc,
-.tdcs {
-	font-size: 9pt;
-	text-align: center;
+H6	{
+	font-size: 12pt;
+	font-style: italic;
 	}
-.tds {
-	font-size: 9pt;
-	}
-.tdt {
-	font-size: 8pt;
-	}
+
+INPUT.tdc,
 .tdc {
 	text-align: center;
+	font-size: 12pt;
 	}
 
-.tdct {
-	font-size: 8pt;
+TD {
+	padding: 3 px;
+}
+
+
+INPUT.tdsc,
+INPUT.tdcs,
+TD INPUT.tdsc,
+TD INPUT.tdcs,
+TD.tdsc,
+TD.tdcs,
+TD A.tdsc,
+TD A.tdcs,
+A.tdsc,
+A.tdcs,
+TD TD.tdsc,
+TD TD.tdcs,
+.tdsc,
+.tdcs {
+	font-size: 10pt;
+	text-align: center;
+	vertical-align: top;
 	}
 
+INPUT.tdscm,
+INPUT.tdcsm,
+TD INPUT.tdscm,
+TD INPUT.tdcsm,
+TD.tdscm,
+TD.tdcsm,
+TD A.tdscm,
+TD A.tdcsm,
+A.tdscm,
+A.tdcsm,
+TD TD.tdscm,
+TD TD.tdcsm,
+.tdscm,
+.tdcsm {
+	font-size: 10pt;
+	text-align: center;
+	vertical-align: middle;
+	}
+
+
+
+.tdrs {
+	font-size: 10pt;
+	text-align: right;
+	}
+
+TD.tdss,
+TD.tdss A,
+TD A.tdss,
+A.tdss,
+.tdss {
+	font-size: 10pt;
+	text-align: center;
+	horizontal-align: center;
+	vertical-align: middle;
+	}
+
+A.tdss {
+	font-size: 10pt;
+	text-align: center;
+	horizontal-align: center;
+	vertical-align: middle;
+	}
+
+
+TD.tds,
+A.tds,
+TD A.tds,
+INPUT.tds,
+TD TD.tds,
+TD INPUT.tds,
+.tds {
+	font-size: 10pt;
+	vertical-align: top;
+	text-align: left;
+	}
+
+TD.tdsm,
+A.tdsm,
+TD A.tdsm,
+INPUT.tdsm,
+TD TD.tdsm,
+TD INPUT.tdsm,
+.tds {
+	font-size: 10pt;
+	vertical-align: middle;
+	text-align: left;
+	}
 
 .tdlcs,
-TD .tdlcs,
-TD TD .tdlcs,
-TD TD TD .tdlcs
+INPUT.tdlcs,
+TD.tdlcs,
+TD TD.tdlcs,
+TD TD TD.tdlcs
 	{
-	font-size: 9pt;
+	font-size: 10pt;
+	vertical-align: top;
 	text-align: center;
-	background-color: #CCEEFF;
+	background-color: #DBB167;	// Yellow
 	}
 
 .tdls,
-TD .tdls,
-TD TD .tdls,
-TD TD TD .tdls
+INPUT.tdls,
+TD.tdls,
+TD TD.tdls,
+TD TD TD.tdls
 	{
-	font-size: 9pt;
-	background-color: #CCEEFF;
+	font-size: 10pt;
+	vertical-align: top;
+	background-color: #DBB167;	// Yellow
 	}
-
-
-
 
 .tdl,
-TD .tdl,
-TD TD .tdl,
-TD TD TD .tdl
+INPUT.tdl,
+TD.tdl,
+TD TD.tdl,
+TD TD TD.tdl
 	{
-	background-color: #CCEEFF;
+	font-size: 12pt;
+	vertical-align: top;
+	background-color: #DBB167;	// Yellow
 	}
-	
 
-.sm01 {
-	font-size: 8pt;
+
+.tdlb,
+TD .tdlb,
+TD TD .tdlb,
+TD TD TD .tdlb
+	{
+    vertical-align: top;
+	background-color: #D29099;
+	font-weight: bold;
 	}
+
+.tdv,
+INPUT.tdv,
+TD.tdv,
+TD TD.tdv,
+TD TD TD.tdv
+	{
+	font-size: 12pt;
+	vertical-align: top;
+	}
+
 
 .trace {
 	font-size: 8pt;
 	text-align: center;
 	}
-TT	{
-	color: #CC0066;
+
+.small {
+	font-size: 10pt;
 	}
+
+.commentlist {
+    margin-left: 0;
+    font-size: 8pt;
+    padding-left: 0;
+    list-style: none;
+    }
+
+.commentlistitem {
+    padding-left: 10px;
+    padding-left: 20px;
+    font-size: 8pt;
+    margin-left: 0;
+    padding-left: 0;
+    list-style: none;
+    }
+
+.commentlistbody {
+    padding-left: 20px;
+    margin-left: 0;
+    font-size: 8pt;
+    list-style: none;
+    }
+
+.navbar {
+	color: #FFF;
+	font-size: 10pt;
+	//height: 30px;
+	text-align: center;
+	width: 100%;
+	background-color: #594C7A;	// Purple
+}
+
+TD.navbar {
+	font-size: 10pt;
+	color: #FFF;
+	text-align: center;
+	height: 30px;
+	width: 100%;
+	background-color: #594C7A;	// Purple
+}
+
+a.navbar {
+	font-size: 10pt;
+	color: #FFF;
+}
+
+a.footer {
+	font-size: 8pt;
+}
 
