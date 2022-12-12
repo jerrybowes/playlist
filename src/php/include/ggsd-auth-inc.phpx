@@ -1,0 +1,299 @@
+<?php
+	//#==================================================================
+	//# Login, password, and authorization function library
+	//#------------------------------------------------------------------
+	//# $Source: /home/jbowes/ggsdinfo/src/php/include/RCS/ggsd-auth-inc.phpx,v $
+	//# $Id: ggsd-auth-inc.phpx,v 1.2 2022/12/12 19:08:02 jbowes Exp $
+	//#------------------------------------------------------------------
+	//# SET EDITOR FOR 4 space TAB stops
+	//# :set autoindent tabstop=4 showmatch	 (vi)
+	//#==================================================================
+	// Generate Password 
+	//===================================================================
+	function generate_password () {
+		$subname = "generate_password";
+		$charset = array();
+		$bigletters = array();
+		$smallvowels = array('a','i','e','o','u');
+		$bigvowels = array('A','I','E','O','U');
+		$a1 = range('A', 'H');	// Exclude 'I' as ambiguous
+		$a2 = range('J', 'N');	// Exclude 'O' as ambiguous
+		$a3 = range('P', 'Z');
+		$a4 = range('a', 'k');	// Exclude 'l' as ambiguous
+		$a5 = range('m', 'n');	// Exclude 'o' as ambiguous
+		$a6 = range('p', 'z');
+		$a7 = range('2', '9');	// Exclude '1', '0' as ambiguous
+		$a8 = array('.', ',', '@', '_');
+		$charset = array_merge($a1,$a2,$a3,$a4,$a5,$a6,$a7,$a8);
+	
+		$max = count($charset);
+		$max--;
+	
+		$NotFirst = array (
+		"."	=>	"1",
+		","	=>	"1",
+		";"	=>	"1",
+		"@"	=>	"1"
+		);
+	
+		$phonetic = array (
+		'"'	=>		"DoubleQuote",
+		"'"	=>		"SingleQuote",
+		"_"	=>		"UnderScore",
+		"*"	=>		"Asterix",
+		"%"	=>		"PercentSign",
+		"@"	=>		"AtSign",
+		"+"	=>		"PlusSign",
+		"="	=>		"EqualsSign",
+		"!"	=>		"ExclamationMark",
+		","	=>		"Comma",
+		"."	=>		"Period",
+		"1"	=>		"One",
+		"2"	=>		"Two",
+		"3"	=>		"Three",
+		"4"	=>		"Four",
+		"5"	=>		"Five",
+		"6"	=>		"Six",
+		"7"	=>		"Seven",
+		"8"	=>		"Eight",
+		"9"	=>		"Nine",
+		":"	=>		"Colon",
+		";"	=>		"Semicolon",
+		"?"	=>		"QuestionMark",
+		"A"	=>		"ALPHA",
+		"B"	=>		"BRAVO",
+		"C"	=>		"CHARLIE",
+		"D"	=>		"DELTA",
+		"E"	=>		"ECHO",
+		"F"	=>		"FOXTROT",
+		"G"	=>		"GOLF",
+		"H"	=>		"HOTEL",
+		"I"	=>		"INDIA",
+		"J"	=>		"JULIET",
+		"K"	=>		"KILO",
+		"L"	=>		"LIMA",
+		"M"	=>		"MIKE",
+		"N"	=>		"NANCY",
+		"O"	=>		"OSCAR",
+		"P"	=>		"PAPA",
+		"Q"	=>		"QUEBEC",
+		"R"	=>		"ROMEO",
+		"S"	=>		"SIERRA",
+		"T"	=>		"TANGO",
+		"U"	=>		"UNIFORM",
+		"V"	=>		"VICTOR",
+		"W"	=>		"WHISKEY",
+		"X"	=>		"XRAY",
+		"Y"	=>		"YANKEE",
+		"Z"	=>		"ZULU",
+		"a"	=>		"alpha",
+		"b"	=>		"bravo",
+		"c"	=>		"charlie",
+		"d"	=>		"delta",
+		"e"	=>		"echo",
+		"f"	=>		"foxtrot",
+		"g"	=>		"golf",
+		"h"	=>		"hotel",
+		"i"	=>		"india",
+		"j"	=>		"juliet",
+		"k"	=>		"kilo",
+		"l"	=>		"lima",
+		"m"	=>		"mike",
+		"n"	=>		"nancy",
+		"o"	=>		"oscar",
+		"p"	=>		"papa",
+		"q"	=>		"quebec",
+		"r"	=>		"romeo",
+		"s"	=>		"sierra",
+		"t"	=>		"tango",
+		"u"	=>		"uniform",
+		"v"	=>		"victor",
+		"w"	=>		"whiskey",
+		"x"	=>		"xray",
+		"y"	=>		"yankee",
+		"z"	=>		"zulu",
+		"~"	=>		"Tilde"
+		);
+	
+		$pw = '';			// Raw Password
+		$phon = array();	// Phonetic
+		$length = strlen($pw);
+    	for ($i =0; $length < 8; $i++) {
+			$idx = rand(0, $max );
+			$thischar = $charset[$idx];
+			if (empty($pw)) {
+				if ( empty($NotFirst[$thischar] )) {
+					$pw .= $thischar;
+					array_push($phon , $phonetic[$thischar]);
+				}
+			}else{
+				$pw .= $thischar;
+				array_push($phon ,$phonetic[$thischar]);
+			}
+			$length = strlen($pw);
+    	}
+		$phonout = implode('-', $phon);
+		return array($pw, $phonout);
+	}#Endif generate_password
+
+	//===================================================================
+    // For PHP7
+	//===================================================================
+    function new_generate_password($length = 20){
+        //$chars =  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.
+        //'0123456789`-=~!@#$%^&*()_+,./<>?;:[]{}\|';
+		// Remove visually similar/ambiguous characters 
+        $chars =  'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz'.
+        '23456789`-=~!@#$%^&*()_+,./<>?;:[]{}\|';
+        $str = '';
+        $max = strlen($chars) - 1;
+        for ($i=0; $i < $length; $i++) {
+            $str .= $chars[random_int(0, $max)];
+            return $str;
+        }
+    }
+
+
+	//===================================================================
+	//  Remove Access Login
+	//===================================================================
+	function remove_access_login( $X ){
+
+		echo "<P class=trace>Entering remove_access_login for $X</P>\n";	// DEVONLY
+		if (! is_numeric( $X ) ) {
+			die ("ERROR: Attempt to delete login access, people_id ($X) needs to be an integer. It is not.");
+		}
+
+		$dbh = ggsd_pdo_connect();
+		$sql = "DELETE from access where people_id = ";
+		$sql .= $dbh->quote($X);
+		echo "<P class=trace>$sql</P>\n";
+		$dbh->query($sql);
+	}
+
+
+	//===================================================================
+	//  Create Access Login
+	//===================================================================
+	function add_access_login( $X ){
+		$dbh = ggsd_pdo_connect();
+
+		$Default = array(
+			'access_level'			=>	'1',
+			'access_role'			=>	'User',
+			'expiration_horizon'	=>	'7',
+			'access_password'		=>	'*redacted*',
+			'access_class'			=>	'User',
+		);
+
+		$What = array(
+			'people_id',
+			'access_class',
+			'access_level',
+			'access_login', 
+			'access_password',
+			'access_role', 
+			'expiration_date',
+		);
+
+		$Required = array(
+			'access_class', 
+			'access_level',
+			'access_login', 
+			'access_password',
+			'access_role', 
+			'expiration_date',
+		);
+
+		if ( isset( $X['people_id'] ) ) {
+			if (is_numeric($X['people_id'])){
+
+				$sql = "SELECT first_name, last_name, nickname,  full_name from people where people_id = ";
+				$sql .= $dbh->quote($X['people_id']);
+				echo "<P class=trace>$sql</P>\n";
+				$result = $dbh->query($sql);
+
+    			$Person = array();
+            	$Person = $result->fetch(PDO::FETCH_ASSOC);
+
+				$Default['first_name'] = $Person['first_name'];
+				$Default['last_name'] = $Person['last_name'];
+			}
+		}
+
+		//
+		// Backfill any missing entries with defaults
+		//
+		foreach ( $Required as $key  ) {
+			if (! isset( $X[$key] ) ) {
+				if ( isset($Default[$key] ) ) {
+					$X[$key] = $Default[$key] ;
+				}
+			}
+		}
+
+
+		if ( isset( $X['expiration_horizon'] ) ) {
+			$Default['expiration_horizon'] = $X['expiration_horizon'] ;
+			echo "<P class=trace>Setting expiration date to $Default[expiration_horizon]</P>\n";	// DEVONLY
+		}
+
+		if ( ! isset( $X['expiration_date'] ) ) {
+			//
+			// Calculate Expiration Date if not provided
+			//
+			$today = date('Y-m-d');
+
+			//
+			// Assumes allcal_id is increasing with time
+			//
+			$sql = "SELECT allcal_id from allcal where calendar_date >= ";
+			$sql .= $dbh->quote($today);
+			$sql .= " ORDER BY allcal_id LIMIT ";
+			$sql .= $Default['expiration_horizon'];
+			echo "<P class=trace>$sql</P>\n";	// DEVONLY
+			$days = array();
+			$days = get_menu($sql);
+			$idx = max($days);
+
+			$sql = "SELECT calendar_date from allcal where allcal_id = $idx";
+			$X['expiration_date'] = get_value($sql);
+			echo "<P class=trace>$sql FETCHES $X[expiration_date]</P>\n";	// DEVONLY
+		}
+
+		if ( isset($Person['nickname'])){
+			$X['access_login'] = strtolower($X['nickname']) . '.' . strtolower($X['last_name']);
+		}else{
+			$X['access_login'] = strtolower($X['first_name']) . '.' . strtolower($X['last_name']);
+		}
+
+		foreach ( $Required as $key  ) {
+			if (! isset( $X[$key] ) ) {
+				die("No parameter $key provided to add_access_login\n");
+			}
+		}
+
+		$sql = $sql2 = '';
+		foreach ($What as $f) {
+			if ( array_key_exists($f, $X)) {
+				$sql .= $f . ',';
+			}
+		}
+		foreach ($What as $f) {
+			if ( array_key_exists($f, $X)) {
+				$val = $dbh->quote($X[$f]);
+				$sql2 .=  $val . ',';
+			}
+		}
+
+		$finalsql = "INSERT INTO access (";
+		$finalsql .= rtrim($sql, ",") .  ') VALUES (' .  rtrim($sql2, ",") . ")";
+		echo "<p class=trace>$finalsql</p>\n";	//DEBUG DEVONLY
+
+		$dbh->query($finalsql);
+		$access_id = $dbh->lastInsertId();
+		echo "<P class=trace>Success: Access ID: $access_id</P>\n";	// DEVONLY
+	}// Endfunction
+	//===================================================================
+
+?>

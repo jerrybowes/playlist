@@ -1,0 +1,491 @@
+<?php
+	//#==================================================================
+	//# GGSD Mysql Utilities
+	//#------------------------------------------------------------------
+	//# $Source: /home/jbowes/ggsdinfo/src/php/include/RCS/ggsd-msutils-inc.phpx,v $
+	//# $Id: ggsd-msutils-inc.phpx,v 1.2 2022/12/12 19:09:52 jbowes Exp $
+	//#------------------------------------------------------------------
+	//# SET EDITOR FOR 4 space TAB stops
+	//# :set autoindent tabstop=4 showmatch	 (vi)
+	//#==================================================================
+	
+	require_once ("ggsd-config-inc.phpx");
+	//===================================================================
+	// Format Phone Number
+	//===================================================================
+	function format_phone_number ($pnum) {
+    	return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '$1-$2-$3', $pnum);
+	}
+	//===================================================================
+	// Get Menu
+	//===================================================================
+	function get_menu ($sql) {
+		global $GGSDCFG;
+		$menu = array () ;
+
+		$dbh = ggsd_pdo_connect();
+		$result = $dbh->query($sql);
+		$row = array();
+
+		if ( $result ) {
+			while ($row = $result->fetch(PDO::FETCH_NUM)){
+				foreach ($row as  $ent) {
+					if (isset ($ent)) {
+						array_push($menu, $ent);
+					}
+				}
+     		}
+    	}//Endif $sth
+		return($menu);
+	}//Endfunction get_menu 
+
+	//===================================================================
+	// Get Dept Tag Roster
+	//===================================================================
+	function get_dept_both_list () {
+
+		$dbh = ggsd_pdo_connect();
+		$Dept = array();
+		$sql = "SELECT department_id, department_tag, department_name from department order by department_tag";
+		$result = $dbh->query($sql);
+		while ($row = $result->fetch(PDO::FETCH_ASSOC)){
+			$did = $row['department_id'];
+			$Dept[$did] = strtoupper($row['department_tag']) . "&nbsp;&nbsp;" . "(" .  $row['department_name'] . ")";
+		}
+		return($Dept);
+
+	}//Endfunction get_dept_both_list
+	//===================================================================
+	// Run SQL
+	//===================================================================
+	function run_sql ($sql) {
+		$ME = "run_sql";
+		$dbh = ggsd_pdo_connect();
+		$result = $dbh->query($sql);
+	}//Endfunction run_sql
+
+	//===================================================================
+	// Get Menu Array (key, value) -> $Return{$key} = Value
+	//===================================================================
+	function get_menu_array ($sql) {
+		$ME = "get_menu_array";
+		global $GGSDCFG;
+		$menu_array = array();
+		$row = array();
+
+		$dbh = ggsd_pdo_connect();
+		$result = $dbh->query($sql);
+
+    	if ( $result ) {
+			while ($row = $result->fetch(PDO::FETCH_BOTH)){
+				$ky = $row[0];
+				$val = $row[1];
+				if ( $ky ) {
+					$menu_array[$ky] = $val ;
+				}
+        	};
+    	}//Endif $sth
+
+  		return($menu_array);
+	}//Endfunction get_menu_array
+
+	//===================================================================
+	// Get List of Table Fields
+	//===================================================================
+	function get_fields ($table) {
+		$ME = "get_fields";
+		global $GGSDCFG;
+		$output = array();
+
+		$dbh = ggsd_pdo_connect();
+		$sql = "SHOW COLUMNS FROM $table";
+		$result = $dbh->query($sql);
+
+
+		if (!$result) {
+    		echo 'Could not run query: ' . mysql_error();
+	    	exit;
+		}
+
+		if ($result->rowCount() > 0) {
+	    	while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+	        	$output[] = $row[0];
+	    	}
+		}
+		return($output);
+	}//Endfunction get_fields
+
+	//===================================================================
+	// Validate Date : Return 0 is success (valid)
+	//===================================================================
+	function validate_date ($candidate) {
+		$ME = "validate_date";
+        unset($err);
+        $date_pattern = '[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])';
+        if (!preg_match("/$date_pattern/",$candidate)) { 
+            $err = "Expecting YYYY-MM-DD.";
+        }
+
+        list($year, $month, $day) = explode('-', $candidate);
+
+        if (! checkdate($month, $day, $year ) ) {
+            $err .= " Invalid format.";
+        }
+        if ( $year < 1901) {
+            $err .= " I don't think a date more than a century ago is right.";
+        }
+        if ( $year > 2050) {
+            $err .= " Do you really plan more than 3 decades ahead?. Wow!";
+        }
+        if ( $month > 12 ) {
+            $err .= " There are only 12 months per year for the middle entry.";
+        }
+        if ( $day > 31 ) {
+            $err .= " There are no more than 31 days per month for the third entry.";
+        }
+		return($err);
+	}//Endfunction validate_date
+
+	//===================================================================
+	// Get Value
+	//===================================================================
+	function get_value ($sql) {
+		$ME = "get_value";
+		$x = '';
+		$dbh = ggsd_pdo_connect();
+    	if ( $dbr = $dbh->query($sql) ) {
+        	while ( $r = $dbr->fetch(PDO::FETCH_BOTH) ) {
+				if ($r[0]) {
+            		$x = $r[0] ;
+				}
+        	};
+    	}//Endif $sth
+		return($x);
+	}//Endfunction get_value
+
+	//===================================================================
+	// Spew Select Hash Menu 
+	// $value and $default must be array keys
+	//===================================================================
+	function spew_select_hash_menu ( $fieldname, $value, $default, array $values ) {
+		$ME = "spew_select_hash_menu";
+		$allkey = array();
+		$allval = array();
+		$match = array();
+
+		//-------------------------------------------------
+		// Calculate if $value is present in $values array
+		//-------------------------------------------------
+		foreach ($values as $key => $val ) {
+			$allkey[$key] += 1;
+			$allval[$val] += 1;
+			if (! empty($val) ) {
+				if ( $key == $value ) {
+					$match[$key] += 1;
+				}
+				if ( $val == $value ) {
+					$match[$key] += 1;
+				}
+			}
+		}
+		//-------------------------------------------------
+		// If not, put default as selected
+		//-------------------------------------------------
+		//
+		if ( ! empty ($default) ) {
+	  		if ( array_key_exists($default, $allkey)) {
+			    if (! count($match) ) {
+			    	$match[$default] += 1;
+			    }
+	  		}
+		}
+		//-------------------------------------------------
+		// Generate html menu
+		//-------------------------------------------------
+		echo "<SELECT NAME=\"$fieldname\">\n";
+		foreach ($values as $key => $val ) {
+			echo "<OPTION";
+			if (isset($match[$key]) ) {
+				echo " SELECTED";
+			}
+			echo " VALUE=\"$key\">$val\n";
+		}
+		echo "</SELECT>\n";
+	
+	}//Endfunction spew_select_hash_menu
+
+	//===================================================================
+	// Spew Multiple Select Menu
+	//===================================================================
+	function spew_multiple_select_menu  ( $fieldname, $val, $default, $num, array $values ) {
+		$ME = "spew_multiple_select_menu";
+		echo "<SELECT NAME=\"${fieldname}[]\" MULTIPLE SIZE=$num>\n";
+		foreach ( $values as $i ){
+			trim($i);
+			echo "<OPTION";
+			if ($i === $val ) {
+				echo " SELECTED";
+				$hit++;
+			}
+			echo ">$i\n";
+		}
+		if ($default) {
+			if ($hit) {
+				echo "<OPTION>$default\n" ;
+			}else{
+				echo "<OPTION SELECTED>$default\n" ;
+			}
+		}
+		echo "</SELECT>\n";
+	}//Endfunction spew_multiple_select_menu
+
+	//===================================================================
+	// Spew Select Menu
+	//===================================================================
+	function spew_select_menu ( $fieldname, $val, $default, array $invalues ) {
+		$ME = "spew_select_menu";
+	
+		//
+		// If default is given, add it to the incoming array
+		//
+		if (isset ($default)) {
+			if (! empty ($default)) {
+				$invalues[] = $default;
+			}
+		}
+		//
+		// In case default was already part of incoming array, 'uniquify' the array
+		//
+		$values = array ();
+		$values = array_unique($invalues);
+	
+		echo "<SELECT NAME=\"$fieldname\">\n";
+	
+		//
+		// If a given value is given as parameter 2
+		// Identify if that incoming value matches a list item
+		// Designate it as 'Selected'
+		//
+		if ( isset($val) ) {
+			foreach ( $values as $i ){
+				if ( $i == $val ) {
+					$selected = $val;
+				}
+			}
+		}
+		//
+		// If no match on incoming value, designate default as 'Selected'
+		//
+		if (isset($default) ) {
+			if ( ! isset($selected) ) {
+				$selected = $default;
+			}
+		}
+	
+		foreach ( $values as $i ){
+			if ( $i == $selected ) {
+				echo "<OPTION SELECTED>$i\n";
+			}else{
+				echo "<OPTION>$i\n";
+			}
+		}
+		echo "</SELECT>\n";
+	}//Endfunction spew_select_menu
+	
+	//===================================================================
+	// Get Field Labels, return assocate array $fieldname => $label
+	// Generate list of human readable names from list of fieldnames
+	// Input: name of database table
+	//===================================================================
+	function get_field_labels($table, $cullme, $db) {
+
+		global $VALIDPREFERENCE;
+		global $GGSDCFG;
+
+		$dbh = ggsd_pdo_connect();
+
+		if (!isset($db)){
+			$db = $GGSDCFG['DBNAME'];
+		}
+
+		echo "<P class=trace>get_field_labels:Table: $table, Cullme:  $cullme</P>\n"; //DEBUG DEVONLY
+	
+	
+		$out = array();
+		$row = array();
+		$Label = array();
+		$lang = "US_English";
+	
+		if (isset ($VALIDPREFERENCE) ){
+			if ( array_key_exists('language', $VALIDPREFERENCE)) {
+				$lang = $VALIDPREFERENCE['language'];
+			}
+		}
+
+		if (isset ($_SESSION) ){
+			if ( array_key_exists('language', $_SESSION)) {
+				$lang = $_SESSION['language'];
+			}
+		}
+
+		echo "<P class=trace>Language: $lang</P>\n"; //DEBUG DEVONLY
+		
+		$sql = "SELECT field_name, short_message FROM message WHERE ";
+		$sql .= "table_name = '$table' AND message_type = 'Field Label'";
+		$sql .= " AND language = '$lang'";
+	
+		echo "<P class=trace>get_field_labels: $sql</P>\n"; //DEBUG DEVONLY
+	
+		$result = $dbh->query($sql);
+		$rowcount = $result->rowCount();
+
+		echo "<P class=trace>Row Count: $rowcount</P>\n"; //DEBUG DEVONLY
+	
+		if ($rowcount > 0) {
+		 	while ($row = $result->fetch(PDO::FETCH_BOTH)){
+				$f = $row['field_name'];
+				$Label[$f] = $row['short_message'];
+			}
+			echo "<H2>From get_fields_label Output from Message</H2>\n"; 	//DEBUG DEVONLY
+			echo "<PRE>\n"; 	//DEBUG DEVONLY
+			print_r($Label);	//DEBUG DEVONLY
+			echo "</PRE>\n"; 	//DEBUG DEVONLY
+
+			return($Label);
+
+		}else{
+			$sql2 = "describe $table ";
+
+			echo "<P class=trace>get_field_labels: (rowcount =0): $sql2</P>\n"; //DEBUG DEVONLY
+	
+			$result = $dbh->query($sql2);
+
+		 	while ($row = $result->fetch(PDO::FETCH_BOTH)){
+
+	   			$rkey = $row['Field'];
+				$Label[$rkey] = '';
+
+				foreach ( explode('_', $rkey) as $phoneme) {
+					if (isset ( $cullme) ) {
+						if (  $phoneme == $cullme ) {
+						    echo "<BR>CULL Phoneme: [$phoneme], Cullme: [$cullme]\n";// DEBUG DEVONLY
+							// NOOP
+						}else{
+							$word = ucfirst($phoneme);			// Mixed Case
+							$Label[$rkey] .= $word . ' ';	
+						}
+					}else{
+						$word = ucfirst($phoneme);			// Mixed Case
+						$Label[$rkey] .= $word . ' ';	
+					}
+				}
+				rtrim( $Label[$rkey] );			// Remove final space
+			}
+			return($Label);
+		}
+	}//Endfunction get_field_labels
+
+	//===================================================================
+	// Convert individual field name (foo_bar) to label "Foo Bar"
+	//===================================================================
+	function fieldname2label ($fieldname) {
+		foreach (explode('_', $fieldname) as $w) {
+			$w = ucfirst($w);			// Mixed Case
+			$label .= $w . " ";	// Append to label
+		}
+		rtrim($label);			// Remove final space
+		return($label);
+	}//Endfunction fieldname2label
+	
+	//===================================================================
+	// Give Calendar Horizon
+	// Provides a list of YYYY-MM-DD from now to $numdays into future
+	//===================================================================
+	function get_date_list ($numdays){
+		$ME = "get_date_list";
+		$list = array ();
+		$today = date('Y-m-d');
+
+		ggsd_pdo_connect();
+
+		$sql = "SELECT allcal_id FROM allcal WHERE ymd_date = '$today'";
+		$start = get_value($sql);
+		$end = $start + $numdays;
+		$sql = "SELECT ymd_date FROM allcal WHERE allcal_id >= '$start' AND allcal_id <= '$end'";
+		$list = get_menu($sql);
+		return($list);
+	}//Endfunction get_date_list
+	
+	//===================================================================
+	// Timestamp from mysql to display (Journal)
+	// Input  2010-08-16 23:26:08
+	// Output: 2010-08-16 @ 23:26 EDT
+	//===================================================================
+	function timestamp2display ($input){
+		global $GGSDCFG;
+		$ME = "timestamp2display";
+		list($date, $time) = explode(' ', $input);
+		list($hour,$minute,$seconds) = explode(':', $time);
+		list($tz,$tzoffset) = explode('-', $GGSDCFG['LOCALTIMEZONE']);
+
+		if ( isset ( $GGSDCFG['SHOWTIMEZONE'] ) && ( $GGSDCFG['SHOWTIMEZONE'] == 'Yes')) {
+			// With Timezone
+			$newtime = $hour . ':' .  $minute . ' ' . $tz;
+		}else{
+			// Without Timezone
+			$newtime = $hour . ':' .  $minute ;
+		}
+		//$output = $date . ' @ ' . $newtime;
+		$output = $date;
+		return($output);
+	}//Endfunction timestamp2display
+
+	//===================================================================
+	// GGSD PDO CONNECT: Connect to Mysql database
+	//===================================================================
+	function ggsd_pdo_connect() {
+		global $GGSDCFG;
+    	$dbname =	$GGSDCFG['DBNAME'];
+    	$dbhost =	$GGSDCFG['DBHOST'];
+    	$dbuser =	$GGSDCFG['DBUSER'];
+    	$dbpwd =	$GGSDCFG['DBPASSWD'];
+    	$dbport =	$GGSDCFG['DBPORT'];
+		try {
+		    $dbh = new PDO("mysql:host=$dbhost;dbname=$dbname", "$dbuser", "$dbpwd");
+	    	//$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // LIVEONLY 
+
+	    	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT); // LIVEONLY (Default)
+	    	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING); // DEVONLY
+	    	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING); // BETAONLY
+		} catch(PDOException $e) {
+		    echo 'ERROR: ' . $e->getMessage();
+		}
+    	return $dbh;
+	}//Endfunction ggsd_pdo_connect
+
+	//===================================================================
+	// Limited html translation
+	// Allow embedded html, but translate quotes and &
+	//===================================================================
+	function ggsd_htmlspecialchars ($string) {
+		$string = preg_replace('/\"/', '&quot;', $string);
+		$string = preg_replace('/\s+\&\s+/', ' &amp; ', $string);
+		return($string);
+	}// End function ggsd_htmlspecialchars
+
+	//===================================================================
+	// Limited html untranslation
+	// Allow embedded html, but translate quotes and &
+	//===================================================================
+	function ggsd_htmlspecialchars_decode ($string) {
+		$string = preg_replace('/\&quot;/', '"', $string);
+		$string = preg_replace('/\&amp;/', '&', $string);
+		return($string);
+	}// End function ggsd_htmlspecialchars_decode
+
+	//===================================================================
+
+	//===================================================================
+	// END Functions
+	//===================================================================
+?>

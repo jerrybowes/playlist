@@ -1,0 +1,76 @@
+
+<?php
+	//#==================================================================
+	//# Print Environment, Session Variables
+	//#------------------------------------------------------------------
+	//# $Source: /home/jbowes/ggsdinfo/src/php/root/RCS/printenv.php,v $
+	//# $Id: printenv.php,v 1.1 2022/12/12 18:39:54 jbowes Exp $
+	//#------------------------------------------------------------------
+	//# SET EDITOR FOR 4 space TAB stops
+	//# :set autoindent tabstop=4 showmatch	 (vi)
+	//#==================================================================
+	session_start();
+?>
+
+<HTML>
+<HEAD>
+<TITLE> Environment Variables </TITLE>
+</HEAD>
+
+<CENTER>
+
+<TABLE BORDER>
+<TH COLSPAN=2>Session</TH>
+<?php
+foreach ( $_SESSION as $key => $val) {
+	print "<TR><TD>$key</TD><TD>$val</TD>\n";
+}
+?>
+</TABLE>
+<HR>
+
+<TABLE BORDER>
+<TH COLSPAN=2>Cookies</TH>
+<?php
+foreach ( $_COOKIE as $key => $val) {
+	print "<TR><TD>$key</TD><TD>$val</TD>\n";
+}
+?>
+</TABLE>
+<HR>
+
+
+<TABLE BORDER>
+<TH COLSPAN=2>Server Env</TH>
+
+<?php
+foreach ( $_SERVER as $key => $val) {
+	print "<TR><TD>$key</TD><TD>$val</TD>\n";
+}
+?>
+
+</TABLE>
+
+<HR>
+<TABLE BORDER>
+<TH COLSPAN=2>POST</TH>
+<?php
+foreach ( $_POST as $key => $val) {
+	print "<TR><TD>$key</TD><TD>$val</TD>\n";
+}
+?>
+</TABLE>
+
+<HR>
+<TABLE BORDER>
+<TH COLSPAN=2>REQUEST</TH>
+<?php
+foreach ( $_REQUEST as $key => $val) {
+	print "<TR><TD>$key</TD><TD>$val</TD>\n";
+}
+phpinfo();
+?>
+</TABLE>
+</CENTER>
+
+</HTML>

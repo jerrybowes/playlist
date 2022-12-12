@@ -1,0 +1,136 @@
+/*--------------------------------------------------------------------------*/
+/* JBN project default  css stylesheet 										*/
+/*--------------------------------------------------------------------------*/
+/* $Source: /home/jbowes/jbn/src/css/RCS/jbn.css,v $				*/
+/* $Date: 2006/04/24 23:33:27 $												*/
+/* $Id: jbn.css,v 1.9 2006/04/24 23:33:27 jbowes Exp $			*/
+/*--------------------------------------------------------------------------*/
+/* Jerry Bowes	BCS Solutions, www.bcs-solutions.com, jerbowes@pacbell.net	*/
+/*--------------------------------------------------------------------------*/
+/*
+** To Edit:
+** Setup environment
+** 	% jbn	; (aliased to 'setenv PROJ jbn; so' )
+** Edit Development copy:
+**	% U jbn		; This does a RCS checkout and opens a vi
+**				; session as controlled by master.scm.rcs
+**				; script to which 'U' command is linked.
+**				; and the ~/config/scmconfig.dat file(s)
+**				; After edit, script deletes all lines that
+**				; contain keyword 'liveoly' in upper case
+**				; and updates the stylesheet in the /csslive
+**				; directory 
+**	% rel -U jbn	; Strips out all lines with 'devonly' keyword
+**				; in upper case, changes all instances of
+**				; 'csslive'  to 'csslive' 
+**				; and copies file to /csslive directory.
+*/
+/*--------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------*/
+/* TH { background: #99CCFF; } */
+
+TH,
+TH TH,
+TH TH TH,
+.tdh {
+	background-color: #99AAEE;
+	}
+.ths {
+	font-size: 9pt;
+	}
+.tht {
+	font-size: 8pt;
+	}
+
+H1.banner	{
+	font-size: 16pt;
+	font-weight: bold;
+	}
+
+H1	{
+	font-size: 14pt;
+	font-weight: bold;
+	}
+
+H2	{
+	font-size: 12pt;
+	font-weight: bold;
+	}
+
+H3	{
+	font-size: 12pt;
+	font-weight: bold;
+	font-style: italic;
+	}
+
+H4	{
+	font-size: 12pt;
+	font-style: italic;
+	}
+
+
+.tdsc,
+TD.tdsc,
+TD TD.tdsc,
+.tdcs {
+	font-size: 9pt;
+	text-align: center;
+	}
+.tds {
+	font-size: 9pt;
+	}
+.tdt {
+	font-size: 8pt;
+	}
+.tdc {
+	text-align: center;
+	}
+
+.tdct {
+	font-size: 8pt;
+	}
+
+
+.tdlcs,
+TD .tdlcs,
+TD TD .tdlcs,
+TD TD TD .tdlcs
+	{
+	font-size: 9pt;
+	text-align: center;
+	background-color: #CCEEFF;
+	}
+
+.tdls,
+TD .tdls,
+TD TD .tdls,
+TD TD TD .tdls
+	{
+	font-size: 9pt;
+	background-color: #CCEEFF;
+	}
+
+
+
+
+.tdl,
+TD .tdl,
+TD TD .tdl,
+TD TD TD .tdl
+	{
+	background-color: #CCEEFF;
+	}
+	
+
+.sm01 {
+	font-size: 8pt;
+	}
+
+.trace {
+	font-size: 8pt;
+	text-align: center;
+	}
+TT	{
+	color: #CC0066;
+	}
+
